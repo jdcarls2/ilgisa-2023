@@ -1,0 +1,17 @@
+tables:
+  roads:
+    columns:
+    - name: osm_id
+      type: id
+    - name: the_geom
+      type: geometry
+    - name: type
+      type: mapping_value
+    filters:
+      reject:
+        area: ["yes"]
+    mapping:
+      highway:
+      - motorway
+      - trunk
+    type: linestring
