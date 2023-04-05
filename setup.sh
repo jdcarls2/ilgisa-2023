@@ -1,15 +1,13 @@
 #!/bin/sh
 
 # set up directories
-mkdir imposm
-mkdir data
-mkdir scenarios
+mkdir -p scenarios imposm data/cache/{state-highways,county-parks,city-all}
 
 # download  and extract imposm 0.11.1
-wget https://github.com/omniscale/imposm3/releases/download/v0.11.1/imposm-0.11.1-linux-x86-64.tar.gz 
-tar -xzvf imposm-0.11.1-linux-x86-64.tar.gz
+wget -N https://github.com/omniscale/imposm3/releases/download/v0.11.1/imposm-0.11.1-linux-x86-64.tar.gz
+tar -xzvf imposm-0.11.1-linux-x86-64.tar.gz -C imposm --strip-components=1
 
 # get latest geofabric extract of IL
 cd data
-wget https://download.geofabrik.de/north-america/us/illinois-latest.osm.pbf
+wget -N https://download.geofabrik.de/north-america/us/illinois-latest.osm.pbf
 
