@@ -43,3 +43,8 @@ If you prefer an interactive terminal, though, try `docker attach <imposm contai
 # Setting up!
 
 Before you even both with the contents here, you should run the script at `imposm/setup.sh`. This will download imposm and the latest IL OSM extract from GeoFabrik.
+
+# Cloud Computing
+
+This whole setup lends itself very well to a cloud environment like AWS. Kendall County GIS maintains a comprehensive OSM extract for the county and surrounding areas on AWS, running in the *smallest* instance type available, and it performs beautifully.
+The initial import only takes a few minutes, and the data stays updated to within 5 minutes of OSM itself.
