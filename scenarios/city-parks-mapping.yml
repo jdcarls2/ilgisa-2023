@@ -258,30 +258,6 @@ tables:
       - cycleway
       - path
     type: linestring
-  kerbs:
-    columns:
-    - name: osm_id
-      type: id
-    - name: geometry
-      type: geometry
-    - name: type
-      type: mapping_value
-    - name: class
-      type: mapping_key
-    - key: tactile_paving
-      name: tactile_paving
-      type: boolint
-    - key: wheelchair
-      name: wheelchair
-      type: boolint
-    - key: incline
-      name: incline
-      type: string
-    mapping:
-      kerb: [__any__]
-      barrier:
-      - kerb
-    type: point
   plants:
     columns:
     - name: osm_id
