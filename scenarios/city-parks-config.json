@@ -1,0 +1,6 @@
+{
+    "cachedir": "./data/cache/city-parks",
+    "mapping": "./scenarios/city-parks-mapping.yml",
+    "connection": "postgis://gis:gis@0.0.0.0:55432/ilgisa2023?prefix=city_parks",
+    "limitto": "./scenarios/city.geojson"
+}

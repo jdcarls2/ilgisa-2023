@@ -1,0 +1,6 @@
+{
+    "cachedir": "./data/cache/city-all",
+    "mapping": "./scenarios/city-all-mapping.yml",
+    "connection": "postgis://gis:gis@0.0.0.0:55432/ilgisa2023?prefix=city_all",
+    "limitto": "./scenarios/city.geojson"
+}
