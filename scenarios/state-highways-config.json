@@ -1,5 +1,5 @@
 {
     "cachedir": "./data/cache/state-highways",
     "mapping": "./scenarios/state-highways-mapping.yml",
-    "connection": "postgis://gis:gis@0.0.0.0:55432/ilgisa2023?prefix=state-highways"
+    "connection": "postgis://gis:gis@0.0.0.0:55432/ilgisa2023?prefix=state_highways"
 }
