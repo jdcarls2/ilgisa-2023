@@ -12,10 +12,11 @@ services:
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
-  imposm:
+  osm:
     image: 'dlimkin/osm-tools:latest'
     volumes:
       - .:/usr/local/imposm
+    tty: true
 
 volumes:
   db-data:
