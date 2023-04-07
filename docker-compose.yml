@@ -2,7 +2,7 @@ version: '3'
 
 services:
   database:
-    image: 'postgis/postgis'
+    image: 'postgis/postgis:latest'
     ports:
       - 55432:5432
     environment:
@@ -13,7 +13,7 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   imposm:
-    image: 'golang'
+    image: 'dlimkin/osm-tools:latest'
     volumes:
       - .:/usr/local/imposm
 
