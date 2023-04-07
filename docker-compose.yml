@@ -15,7 +15,7 @@ services:
   osm:
     image: 'dlimkin/osm-tools:latest'
     volumes:
-      - .:/usr/local/imposm
+      - .:/usr/local/osm
     tty: true
 
 volumes:
