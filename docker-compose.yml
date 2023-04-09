@@ -11,12 +11,20 @@ services:
       POSTGRES_DB: ilgisa2023
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - osm  
 
   osm:
     image: 'dlimkin/osm-tools:latest'
     volumes:
       - .:/usr/local/osm
     tty: true
+    networks:
+      - osm
 
 volumes:
   db-data:
+
+networks:
+  osm:
+    driver: bridge
