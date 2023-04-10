@@ -8,30 +8,32 @@ If you're on Windows, you can prepend these commands with `docker exec -w /usr/l
 
 # Create a city extract
 
-```
+```shell
 osmium extract -p city.geojson ./data/illinois-latest.osm.pbf -o ./data/city-extract.osm.pbf
 ```
 
-## Major Roads in Illinois
+# Imposm
 
-```
+## Major Roads
+
+```shell
 imposm import -config /usr/local/osm/imposm-scenarios/highways-config.json -read /usr/local/osm/data/city-extract.osm.pbf -deployproduction -optimize -write -overwritecache
 ```
 
 ## Parks Data in a City
 
-```
+```shell
 imposm import -config /usr/local/osm/imposm-scenarios/city-parks-config.json -read /usr/local/osm/data/city-extract.osm.pbf -deployproduction -optimize -write -overwritecache
 ```
 
 ## *Everything* in a City
 
-```
+```shell
 imposm import -config /usr/local/osm/imposm-scenarios/city-all-config.json -read /usr/local/osm/data/city-extract.osm.pbf -deployproduction -optimize -write -overwritecache
 ```
 
 ## Updating Everything
 
-```
+```shell
 imposm run -config /usr/local/osm/imposmkendall-all/config.json
 ```
