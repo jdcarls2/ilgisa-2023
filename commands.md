@@ -15,7 +15,7 @@ osmium extract -p city.geojson ./data/illinois-latest.osm.pbf -o ./data/city-ext
 ## Major Roads in Illinois
 
 ```
-imposm import -config /usr/local/osm/imposm-scenarios/state-highways-config.json -read /usr/local/osm/data/city-extract.osm.pbf -deployproduction -optimize -write -overwritecache
+imposm import -config /usr/local/osm/imposm-scenarios/highways-config.json -read /usr/local/osm/data/city-extract.osm.pbf -deployproduction -optimize -write -overwritecache
 ```
 
 ## Parks Data in a City
