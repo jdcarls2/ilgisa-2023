@@ -1,6 +1,5 @@
 #!/bin/sh
 
-(trap 'kill 0' SIGINT; \
-./imposm/imposm import -config ./scenarios/state-highways-config.json -read ./data/illinois-latest.osm.pbf -deployproduction -optimize -write -overwritecache &
-./imposm/imposm import -config ./scenarios/city-parks-config.json -read ./data/illinois-latest.osm.pbf -deployproduction -optimize -write -overwritecache &
-./imposm/imposm import -config ./scenarios/city-all-config.json -read ./data/illinois-latest.osm.pbf -deployproduction -optimize -write -overwritecache )
+(trap 'kill 0' SIGINT; imposm import -config ./highways-config.json -read ../data/city-extract.osm.pbf -deployproduction -optimize -write -overwritecache &
+imposm import -config ./city-parks-config.json -read ../data/city-extract.osm.pbf -deployproduction -optimize -write -overwritecache &
+imposm import -config ./city-all-config.json -read ../data/city-extract.osm.pbf -deployproduction -optimize -write -overwritecache -diff )

@@ -1,5 +1,0 @@
-{
-    "cachedir": "/usr/local/osm/data/cache/state-highways",
-    "mapping": "/usr/local/osm/imposm-scenarios/state-highways-mapping.yml",
-    "connection": "postgis://gis:gis@database:5432/ilgisa2023?prefix=state_highways"
-}
