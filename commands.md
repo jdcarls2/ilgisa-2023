@@ -37,3 +37,16 @@ imposm import -config /usr/local/osm/imposm-scenarios/city-all-config.json -read
 ```shell
 imposm run -config /usr/local/osm/imposmkendall-all/config.json
 ```
+
+# osm2pgsql
+
+```shell
+osm2pgsql -d postgres://gis:gis@database:5432/ilgisa2023 -p osm2pgsql_all -O flex -S ./osm2pgsql-scenarios/city-all.lua -j ./data/city-extract.osm.pbf
+```
+
+## POI Map
+One of `osm2pgsql`'s own examples, showcasing the ability to process geometry as part of the process.
+
+```shell
+osm2pgsql -d postgres://gis:gis@database:5432/ilgisa2023 -p pois -O flex -S ./osm2pgsql-scenarios/pois.lua -j ./data/city-extract.osm.pbf
+```
