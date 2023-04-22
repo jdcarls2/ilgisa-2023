@@ -1,0 +1,5 @@
+{
+    "cachedir": "/app/data/cache/city-parks",
+    "mapping": "/app/imposm-scenarios/city-parks-mapping.yml",
+    "connection": "postgis://gis:gis@database:5432/ilgisa2023?prefix=city_parks"
+}

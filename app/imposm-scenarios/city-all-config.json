@@ -1,0 +1,5 @@
+{
+    "cachedir": "/app/data/cache/city-all",
+    "mapping": "/app/imposm-scenarios/city-all-mapping.yml",
+    "connection": "postgis://gis:gis@database:5432/ilgisa2023?prefix=city_all"
+}
