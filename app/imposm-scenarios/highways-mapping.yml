@@ -14,4 +14,7 @@ tables:
       highway:
       - motorway
       - trunk
+      - primary
+      - secondary
+      - tertiary
     type: linestring
