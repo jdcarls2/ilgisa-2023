@@ -6,10 +6,10 @@ theme: moon
 revealOptions:
   transition: 'fade'
   slideNumber: true
-  width: 1080
-  height: 900
-  maxScale: 1.5
+  height: 100%
+  width: 100%
   minScale: 0.5
+  maxScale: 2.0
 ---
 
 # Creating & Using a Live, Localized Extract of OpenStreetMap
@@ -31,7 +31,7 @@ revealOptions:
 
 ![](./assets/repo-qr.png)
 
-https://github.com/jdcarls2/ilgisa-2023
+https://github.com/jdcarls2/ilgisa-2023 <!-- .element class="r-text-fit" -->
 
 ----
 
@@ -54,13 +54,12 @@ OSM is a **dataset**, which is...
 
 ## Is anyone actually using it?
 
-- Amazon Logistics <!-- .element: class="fragment" -->
-- Tesla Smart Summon feature <!-- .element: class="fragment" -->
-- Esri (basemaps, feature services) <!-- .element: class="fragment" -->
-- Pokemon Go <!-- .element: class="fragment" -->
-- Red Cross <!-- .element: class="fragment" -->
-- Kendall County! <!-- .element: class="fragment" -->
-- Many, many others <!-- .element: class="fragment" -->
+- Amazon Logistics <!-- .element: class="fragment fade-in-then-semi-out" -->
+- Tesla Smart Summon feature <!-- .element: class="fragment fade-in-then-semi-out" -->
+- Esri (basemaps, feature services) <!-- .element: class="fragment fade-in-then-semi-out" -->
+- Pokemon Go <!-- .element: class="fragment fade-in-then-semi-out" -->
+- Red Cross <!-- .element: class="fragment fade-in-then-semi-out" -->
+- Kendall County! <!-- .element: class="fragment fade-in-then-semi-out" -->
 
 Note: The point here is that there's clearly *something* of value in this dataset, if you can just get at it.
 
@@ -70,9 +69,9 @@ Note: The point here is that there's clearly *something* of value in this datase
 
 The OSM dataset has:
 
-- **no layers** <!-- .element: class="fragment" -->
-- **no schema** <!-- .element: class="fragment" -->
-- **no polygons** <!-- .element: class="fragment" -->
+- no layers <!-- .element: class="fragment" -->
+- no schema <!-- .element: class="fragment" -->
+- no polygons <!-- .element: class="fragment" -->
 
 ![](./assets/lebowski.gif) <!-- .element: class="fragment" -->
 
@@ -112,4 +111,179 @@ Every element in the dataset can have an arbitrary number of key-value pairs. In
 
 ![](./assets/yorkville-osm.jpg)
 
+----
+
+# Getting the Data
+
 ---
+
+## Sources
+
+[OSM wiki](https://wiki.openstreetmap.org/wiki/Downloading_data) page on various sources.
+
+For very small areas, it may be possible to query the **Overpass API** directly.
+
+For this demonstration, we'll use a state-based extract from GeoFabrik: https://download.geofabrik.de/north-america/us/illinois.html
+
+---
+
+### Osmium
+https://osmcode.org/osmium-tool/
+
+A "swiss army knife" for OSM data.
+
+- **Extracting geographic subset**
+- Getting metadata about objects
+- Extract by attribute
+- Generate / apply change files
+- and more!
+
+---
+
+### Audience Participation! <!-- .element: class="r-fit-text" -->
+
+http://geojson.io/#map=6.2/39.976/-89.164
+
+---
+
+```shell[1|2|3|4|5]
+osmium extract \
+  -p city.geojson \
+  ./data/illinois-latest.osm.pbf \
+  -o ./data/city-extract.osm.pbf --overwrite \
+  -s smart -S types=any
+```
+
+----
+
+# Importing
+
+---
+
+## `imposm`
+
+| Pros | Cons |
+|-|-|
+|✅ Easy to use and configure | ❌ Relations are harder to work with, and require own tables |
+|✅ Built in tag "cleaning" | ❌ Lacks advanced geometry processing or configuration |
+|✅ Table generalization | ❌ Area of interest does not apply to relations
+|✅ Area of interest filtering for import *and* updating | ❌ Development has plateaued
+
+
+Note: Tag cleaning meaning yes/no values to boolean fields, numeric values to number fields, etc. Generalization - for a given table, simplify geometries and even drop features smaller than a certain size; useful for small scales
+
+---
+
+Mapping OSM data to tables is done using a YAML config file.
+
+```yaml[1,2|3,4,6,8|3,10-12|16-23|24]
+tables:
+  roads:
+    columns:
+    - name: osm_id
+      type: id
+    - name: the_geom
+      type: geometry
+    - name: type
+      type: mapping_value
+    - key: name
+      name: name
+      type: string
+    filters:
+      reject:
+        area: ["yes"]
+    mapping:
+      highway:
+      - motorway
+      - trunk
+      - primary
+      - secondary
+      - tertiary
+      - residential
+    type: linestring
+```
+
+---
+
+### Importing: Single Table
+
+```shell[1|2|3|4]
+imposm import \
+  -config /app/imposm-scenarios/highways-config.json \
+  -read /app/data/city-extract.osm.pbf \
+  -deployproduction -optimize -write -overwritecache
+```
+
+```json[2|3|4]
+{
+    "cachedir": "/app/data/cache/highways",
+    "mapping": "/app/imposm-scenarios/highways-mapping.yml",
+    "connection": "postgis://gis:gis@database:5432/ilgisa2023?prefix=state_highways"
+}
+```
+<!-- .element class="fragment" -->
+
+---
+
+### Additional Scenarios
+#### Multiple Tables
+
+```shell
+imposm import \
+  -config /app/imposm-scenarios/city-parks-config.json \
+  -read /app/data/city-extract.osm.pbf \
+  -deployproduction -optimize -write -overwritecache
+```
+
+### Importing: *EVERYTHING*
+
+```shell
+imposm import \
+  -config /app/imposm-scenarios/city-all-config.json \
+  -read /app/data/city-extract.osm.pbf \
+  -deployproduction -optimize -write -overwritecache
+```
+
+---
+
+## `osm2pgsql`
+
+|Pros|Cons|
+|-|-|
+|✅ Well established, continued development |❌ Updating requires a replication url, cannot easily be limited to an area of interest
+|✅ Extremely configurable |❌ Custom configuration can be harder to adjust / understand
+|✅ Allows mid-stream geometry operations |❌ Built-in generalization is still only experimental
+|✅ Exports to many coordinate systems
+
+---
+
+Mapping to tables is done with a **Lua** file.
+
+```lua[1|5-7|11-16|18-24]
+local nodes = osm2pgsql.define_table({
+    name = 'osm2pgsql_nodes',
+    ids = { type = 'any', id_column = 'osm_id' },
+    columns = {
+        { column = 'id', sql_type = 'serial', create_only = true },
+        { column = 'tags', type = 'hstore' },
+        { column = 'the_geom', type = 'point', not_null = true }
+    }
+})
+
+function osm2pgsql.process_node(object)
+    nodes:insert({
+        tags = object.tags,
+        the_geom = object:as_point()
+    })
+end
+
+function osm2pgsql.process_way(object)
+    if object.is_closed then
+        nodes:insert({
+            tags = object.tags,
+            the_geom = object:as_polygon():centroid()
+        })
+    end
+```
+
+--- 
