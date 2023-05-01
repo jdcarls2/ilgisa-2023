@@ -7,6 +7,9 @@ tables:
       type: geometry
     - name: type
       type: mapping_value
+    - key: name
+      name: name
+      type: string
     filters:
       reject:
         area: ["yes"]
@@ -17,4 +20,5 @@ tables:
       - primary
       - secondary
       - tertiary
+      - residential
     type: linestring
