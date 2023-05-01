@@ -17,7 +17,7 @@ services:
   osm:
     image: 'dlimkin/osm-tools:latest'
     volumes:
-      - .:/app
+      - ./app:/app
     tty: true
     networks:
       - osm
