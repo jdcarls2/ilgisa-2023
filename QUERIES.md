@@ -3,7 +3,7 @@ For querying your databases in the all-data scenarios.
 # Traffic Roads
 
 ```sql
-SELECT * FROM city_all_ways
+SELECT * FROM osm2pgsql_ways
 WHERE tags -> 'highway' IN (
     'primary',
     'secondary',
@@ -15,3 +15,17 @@ WHERE tags -> 'highway' IN (
     'service'
 )
 ```
+
+# Natural Areas / Land Cover
+
+```sql
+select
+	osm_id,
+	the_geom,
+	coalesce(tags -> 'natural', tags->'landuse') type,
+	tags
+from kendall_areas
+where (tags -> 'natural' is not null and tags -> 'natural' != 'water')
+or tags -> 'landuse' is not null
+```
+

@@ -5,7 +5,7 @@ local pois = osm2pgsql.define_table({
         { column = 'name' },
         { column = 'class', not_null = true },
         { column = 'subclass' },
-        { column = 'tags', type = 'hstore'},
+        { column = 'tags', type = 'jsonb'},
         { column = 'geom', type = 'point', not_null = true },
 }})
 

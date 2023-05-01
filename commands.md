@@ -9,7 +9,7 @@ If you're on Windows, you can prepend these commands with `docker exec -w /usr/l
 # Create a city extract
 
 ```shell
-osmium extract -p city.geojson ./data/illinois-latest.osm.pbf -o ./data/city-extract.osm.pbf -s smart
+osmium extract -p city.geojson /app/data/illinois-latest.osm.pbf -o app/data/city-extract.osm.pbf -s smart
 ```
 
 # Imposm
@@ -35,18 +35,18 @@ imposm import -config /app/imposm-scenarios/city-all-config.json -read /app/data
 ## Updating Everything
 
 ```shell
-imposm run -config /app/imposmkendall-all/config.json
+imposm run -config /app/imposm-scenarios/city-all-config.json
 ```
 
 # osm2pgsql
 
 ```shell
-osm2pgsql -d postgres://gis:gis@database:5432/ilgisa2023 -p osm2pgsql_all --slim -O flex -S ./osm2pgsql-scenarios/city-all.lua -j ./data/city-extract.osm.pbf
+osm2pgsql -d postgres://gis:gis@database:5432/ilgisa2023 -O flex -S app/osm2pgsql-scenarios/city-all.lua -j app/data/city-extract.osm.pbf
 ```
 
 ## POI Map
 One of `osm2pgsql`'s own examples, showcasing the ability to process geometry as part of the process.
 
 ```shell
-osm2pgsql -d postgres://gis:gis@database:5432/ilgisa2023 -p pois -O flex --slim -S ./osm2pgsql-scenarios/pois.lua -j ./data/city-extract.osm.pbf
+osm2pgsql -d postgres://gis:gis@database:5432/ilgisa2023 -O flex --slim -S ./osm2pgsql-scenarios/pois.lua -j ./data/city-extract.osm.pbf
 ```

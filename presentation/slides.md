@@ -8,13 +8,11 @@ revealOptions:
   slideNumber: true
   height: 100%
   width: 100%
-  minScale: 0.5
-  maxScale: 2.0
 ---
 
 # Creating & Using a Live, Localized Extract of OpenStreetMap
 
-----
+---
 
 # Overview
 
@@ -31,7 +29,7 @@ revealOptions:
 
 ![](./assets/repo-qr.png)
 
-https://github.com/jdcarls2/ilgisa-2023 <!-- .element class="r-text-fit" -->
+https://github.com/jdcarls2/ilgisa-2023
 
 ----
 
@@ -69,9 +67,9 @@ Note: The point here is that there's clearly *something* of value in this datase
 
 The OSM dataset has:
 
-- no layers <!-- .element: class="fragment" -->
-- no schema <!-- .element: class="fragment" -->
-- no polygons <!-- .element: class="fragment" -->
+- NO layers <!-- .element: class="fragment" -->
+- NO schema <!-- .element: class="fragment" -->
+- NO polygons <!-- .element: class="fragment" -->
 
 ![](./assets/lebowski.gif) <!-- .element: class="fragment" -->
 
@@ -79,7 +77,9 @@ The OSM dataset has:
 
 To be more precise, OSM is an **object-oriented data model**.
 
-Every element in the dataset can have an arbitrary number of key-value pairs. In OSM, we call those "tags".
+Every element in the dataset can have an arbitrary number of key-value pairs
+
+In OSM, we call those "tags".
 
 ```js[4-8|11-17]
 {
@@ -105,11 +105,11 @@ Every element in the dataset can have an arbitrary number of key-value pairs. In
 ```
 ---
 
-![](./assets/yorkville-framework.jpg)
+![](./assets/framework.jpg)
 
 ---
 
-![](./assets/yorkville-osm.jpg)
+![](./assets/styled.jpg)
 
 ----
 
@@ -119,11 +119,11 @@ Every element in the dataset can have an arbitrary number of key-value pairs. In
 
 ## Sources
 
-[OSM wiki](https://wiki.openstreetmap.org/wiki/Downloading_data) page on various sources.
+https://wiki.openstreetmap.org/wiki/Downloading_data
 
 For very small areas, it may be possible to query the **Overpass API** directly.
 
-For this demonstration, we'll use a state-based extract from GeoFabrik: https://download.geofabrik.de/north-america/us/illinois.html
+State-based extract from GeoFabrik: https://download.geofabrik.de/north-america/us/illinois.html
 
 ---
 
@@ -140,7 +140,7 @@ A "swiss army knife" for OSM data.
 
 ---
 
-### Audience Participation! <!-- .element: class="r-fit-text" -->
+### Audience Participation!
 
 http://geojson.io/#map=6.2/39.976/-89.164
 
@@ -235,13 +235,16 @@ imposm import \
   -deployproduction -optimize -write -overwritecache
 ```
 
-### Importing: *EVERYTHING*
+#### Importing *EVERYTHING*
 
-```shell
+And prepping for future updates!
+
+```shell[|5]
 imposm import \
   -config /app/imposm-scenarios/city-all-config.json \
   -read /app/data/city-extract.osm.pbf \
-  -deployproduction -optimize -write -overwritecache
+  -deployproduction -optimize -write -overwritecache \
+  -diff
 ```
 
 ---
@@ -286,4 +289,128 @@ function osm2pgsql.process_way(object)
     end
 ```
 
---- 
+---
+
+### Importing
+
+#### Points of Interest
+
+```sh[1|2|3|4]
+osm2pgsql \
+  -j /app/data/city-extract.osm.pbf \
+  -d postgres://gis:gis@database:5432/ilgisa2023 \
+  -O flex -S /app/osm2pgsql-scenarios/pois.lua
+```
+
+#### Everything
+
+```sh
+osm2pgsql \
+  -j /app/data/city-extract.osm.pbf \
+  -d postgres://gis:gis@database:5432/ilgisa2023 \
+  -O flex -S /app/osm2pgsql-scenarios/city-all.lua
+```
+
+----
+
+# Updating
+
+```sh
+imposm run -config /app/imposm-scenarios/city-all-config.json
+```
+
+Updating with `osm2pgsql` will only pull apply updates from the original download, i.e., all changes in the GeoFabrik IL extract, or all minutely changes for the entire planet. 
+
+----
+
+# Using It
+
+---
+
+## Those "Everything" Tables
+
+Rather than filter the data on import, it is possible to import all elements.
+
+The tags can all be put into a single `jsonb` column.
+Attributes stored in the following format: 
+```json
+{"key_1":"value_1", "key_2":"value_2", ... "key_n":"value_n"}
+```
+
+Using the `column -> 'key'` syntax returns the value for the specified key.
+
+```sql[|4,5|7]
+SELECT
+  osm_id,
+  the_geom,
+  tags -> 'cuisine' as cuisine,
+  tags -> 'name' as name
+FROM osm2pgsql_nodes
+WHERE tags -> 'amenity' = 'restaurant'
+```
+
+---
+
+### Why would I want that?
+
+- Schema remains as flexible as OSM itself
+- No re-importing / re-indexing
+- As use cases change, only the *queries* need to be modified, not the data
+- Query output can be used identically to any SQL table
+- QGIS has built-in support to parse *and edit* `jsonb` fields
+
+---
+
+### Some Queries
+
+#### Traffic Roads
+
+```sql
+SELECT
+  osm_id,
+  the_geom,
+  tags -> 'name' name,
+  tags -> 'highway' class
+FROM osm2pgsql_ways
+WHERE tags -> 'highway' IN (
+  'primary',
+  'secondary',
+  'tertiary',
+  'motorway',
+  'trunk',
+  'unclassified',
+  'residential',
+  'service'
+)
+```
+
+---
+
+#### Natural Areas / Land Cover
+
+```sql
+SELECT
+	osm_id,
+	the_geom,
+	COALESCE(tags -> 'natural', tags->'landuse') type,
+	tags
+FROM kendall_areas
+WHERE COALESCE(tags -> 'natural', tags->'landuse') IS NOT NULL
+```
+
+---
+
+## What to Do
+
+Honestly, once you write the query, you can use the results for **anything** that you would a normal table, including:
+
+- Publishing a feature service to the web
+- Generating vector tiles
+- Using as input in geoprocessing
+- Create an ArcGIS Locator dataset
+- Create a routable graph network
+
+----
+
+# Questions?
+<!-- .element: class="r-fit-text" -->
