@@ -9,7 +9,7 @@ If you're on Windows, you can prepend these commands with `docker exec -w /usr/l
 # Create a city extract
 
 ```shell
-osmium extract -p city.geojson ./data/illinois-latest.osm.pbf -o ./data/city-extract.osm.pbf
+osmium extract -p city.geojson ./data/illinois-latest.osm.pbf -o ./data/city-extract.osm.pbf -s smart
 ```
 
 # Imposm
