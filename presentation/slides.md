@@ -148,9 +148,9 @@ http://geojson.io/#map=6.2/39.976/-89.164
 
 ```shell[1|2|3|4|5]
 osmium extract \
-  -p city.geojson \
-  ./data/illinois-latest.osm.pbf \
-  -o ./data/city-extract.osm.pbf --overwrite \
+  -p /app/city.geojson \
+  /app/data/illinois-latest.osm.pbf \
+  -o /app/data/city-extract.osm.pbf --overwrite \
   -s smart -S types=any
 ```
 
@@ -394,7 +394,7 @@ SELECT
 	the_geom,
 	COALESCE(tags -> 'natural', tags->'landuse') type,
 	tags
-FROM kendall_areas
+FROM osm2pgsql_areas
 WHERE COALESCE(tags -> 'natural', tags->'landuse') IS NOT NULL
 ```
 
