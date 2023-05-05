@@ -448,7 +448,7 @@ select
 from osm2pgsql_nodes
 where tags -> 'amenity' = 'charging_station'
 ```
----s
+---
 
 ## What to Do
 
