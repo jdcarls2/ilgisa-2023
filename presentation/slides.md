@@ -333,7 +333,7 @@ imposm run -config /app/imposm-scenarios/city-all-config.json
 
 ---
 
-# `osm2pgsql`
+### `osm2pgsql`
 
 Updating with `osm2pgsql` will only pull apply updates from the original download, i.e., all changes in the GeoFabrik IL extract, or all minutely changes for the entire planet.
 
@@ -418,6 +418,24 @@ FROM osm2pgsql_areas
 WHERE COALESCE(tags -> 'natural', tags->'landuse') IS NOT NULL
 ```
 
+---
+
+#### Cycling Infrastructure
+```sql
+select
+	osm_id,
+	the_geom,
+	tags -> 'name' name,
+	case
+		when tags -> 'highway' in ('cycleway', 'footway', 'path') then 'separated'
+		else 'on road'
+	end class,
+	tags -> 'highway' type,
+	tags -> 'bicycle' bicycle_access
+from osm2pgsql_ways
+where tags -> 'bicycle' != 'no'
+or tags -> 'cycleway' = 'lane'
+```
 ---
 
 ## What to Do
