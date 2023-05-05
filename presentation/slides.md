@@ -146,7 +146,7 @@ http://geojson.io/#map=6.2/39.976/-89.164
 
 ---
 
-```shell[1|2|3|4|5]
+```properties[1|2|3|4|5]
 osmium extract \
   -p /app/city.geojson \
   /app/data/illinois-latest.osm.pbf \
@@ -207,7 +207,7 @@ tables:
 
 ### Importing: Single Table
 
-```shell[1|2|3|4]
+```properties[1|2|3|4]
 imposm import \
   -config /app/imposm-scenarios/highways-config.json \
   -read /app/data/city-extract.osm.pbf \
@@ -228,7 +228,7 @@ imposm import \
 ### Additional Scenarios
 #### Multiple Tables
 
-```shell
+```properties
 imposm import \
   -config /app/imposm-scenarios/city-parks-config.json \
   -read /app/data/city-extract.osm.pbf \
@@ -239,7 +239,7 @@ imposm import \
 
 And prepping for future updates!
 
-```shell[|5]
+```properties[|5]
 imposm import \
   -config /app/imposm-scenarios/city-all-config.json \
   -read /app/data/city-extract.osm.pbf \
@@ -295,7 +295,7 @@ function osm2pgsql.process_way(object)
 
 #### Points of Interest
 
-```sh[1|2|3|4]
+```properties[1|2|3|4]
 osm2pgsql \
   -j /app/data/city-extract.osm.pbf \
   -d postgres://gis:gis@database:5432/ilgisa2023 \
@@ -304,7 +304,7 @@ osm2pgsql \
 
 #### Everything
 
-```sh
+```properties
 osm2pgsql \
   -j /app/data/city-extract.osm.pbf \
   -d postgres://gis:gis@database:5432/ilgisa2023 \
@@ -315,11 +315,31 @@ osm2pgsql \
 
 # Updating
 
-```sh
+## The Easy Way
+
+Just re-run the import steps whenever a new extract is available from the original source!
+
+---
+
+## Up-to-the-Minute Updates
+
+### `imposm`
+
+As long as you include `-diff` in the original import command, updating with `imposm` is very simple:
+
+```properties
 imposm run -config /app/imposm-scenarios/city-all-config.json
 ```
 
-Updating with `osm2pgsql` will only pull apply updates from the original download, i.e., all changes in the GeoFabrik IL extract, or all minutely changes for the entire planet. 
+---
+
+# `osm2pgsql`
+
+Updating with `osm2pgsql` will only pull apply updates from the original download, i.e., all changes in the GeoFabrik IL extract, or all minutely changes for the entire planet.
+
+To limit said changes to your area of interest is possible, but requires some custom coding to work.
+
+If "live" data is needed, probably just use `imposm`.
 
 ----
 
