@@ -8,6 +8,7 @@ revealOptions:
   slideNumber: true
   height: 100%
   width: 100%
+  
 ---
 
 # Creating & Using a Live, Localized Extract of OpenStreetMap
@@ -437,6 +438,17 @@ where tags -> 'bicycle' != 'no'
 or tags -> 'cycleway' = 'lane'
 ```
 ---
+
+#### Charging Stations!
+```sql
+select
+  osm_id,
+  the_geom,
+  tags -> 'access' access
+from osm2pgsql_nodes
+where tags -> 'amenity' = 'charging_station'
+```
+---s
 
 ## What to Do
 
